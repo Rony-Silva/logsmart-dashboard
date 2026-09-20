@@ -5,7 +5,7 @@ import streamlit as st
 import plotly.express as px
 
 # -----------------------------------------------------------------------------
-# 1. Configuração da Página e CSS Visual Premium (Dark Obsidian / Glassmorphism)
+# 1. Configuração da Página e CSS Visual Premium (Dark Obsidian Fix)
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="LogSmart - Control Tower Offshore",
@@ -22,14 +22,31 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
 
-    /* Fundo Dark Obsidian com Gradiente Radial */
-    .stApp {
-        background: radial-gradient(circle at 20% 20%, #0f172a 0%, #080c14 100%);
-        color: #f8fafc;
+    /* Fundo Dark Obsidian Forçado no Conteúdo e Cabeçalho */
+    .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background: radial-gradient(circle at 20% 20%, #0f172a 0%, #080c14 100%) !important;
+        color: #f8fafc !important;
     }
 
+    /* Ocultar menus padrões */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+
+    /* Forçar cores de texto legíveis em rótulos e marcadores */
+    label, p, span, h1, h2, h3, h4, h5, h6, [data-testid="stMarkdownContainer"] p {
+        color: #f8fafc !important;
+    }
+
+    /* Customização dos componentes de filtro (Selectbox/Multiselect) */
+    div[data-baseweb="select"] > div {
+        background-color: #1e293b !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #f8fafc !important;
+    }
+    
+    div[data-baseweb="tag"] {
+        background-color: #3b82f6 !important;
+    }
 
     /* Top Banner Hero */
     .hero-container {
@@ -51,15 +68,15 @@ st.markdown("""
         letter-spacing: -0.02em;
     }
     .hero-subtitle {
-        color: #94a3b8;
+        color: #94a3b8 !important;
         font-size: 0.95rem;
         margin-top: 6px;
         font-weight: 400;
     }
 
-    /* Cards de Métricas com Efeito Glassmorphism */
+    /* Cards de Métricas com Glassmorphism */
     .metric-card {
-        background: rgba(15, 23, 42, 0.6);
+        background: rgba(15, 23, 42, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(16px);
         border-radius: 16px;
@@ -84,14 +101,14 @@ st.markdown("""
         border-color: rgba(56, 189, 248, 0.4);
     }
     .metric-label {
-        color: #64748b;
+        color: #94a3b8 !important;
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
     }
     .metric-val {
-        color: #f8fafc;
+        color: #f8fafc !important;
         font-size: 1.9rem;
         font-weight: 900;
         margin-top: 8px;
@@ -106,14 +123,14 @@ st.markdown("""
         backdrop-filter: blur(12px);
         border-radius: 12px;
         padding: 16px 20px;
-        color: #fecdd3;
+        color: #fecdd3 !important;
         font-weight: 600;
         margin-bottom: 25px;
     }
 
     /* Barra Lateral Dark */
     [data-testid="stSidebar"] {
-        background-color: #0b0f19;
+        background-color: #0b0f19 !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05);
     }
 
@@ -128,7 +145,7 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         height: 40px;
         border-radius: 8px;
-        color: #94a3b8;
+        color: #94a3b8 !important;
         font-weight: 600;
         border: none;
     }
@@ -140,17 +157,17 @@ st.markdown("""
 
     /* Estilização de Botões */
     .stButton>button {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        color: #38bdf8;
-        border: 1px solid rgba(56, 189, 248, 0.3);
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
         border-radius: 10px;
         font-weight: 600;
         transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-        color: #ffffff;
-        border-color: transparent;
+        background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
         box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
     }
 </style>
