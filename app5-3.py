@@ -356,7 +356,67 @@ df_filtrado = df_raw[
 ].copy()
 
 # -----------------------------------------------------------------------------
-# 5. Dashboard de Métricas
+# 5. NOVO: Módulo de Consulta Consolidada por Item Específico (Todas as Plataformas)
+# -----------------------------------------------------------------------------
+st.markdown("### 🔍 Consulta de Item Individual (Consolidado Global)")
+
+itens_unicos = sorted(list(df_raw["Item"].unique()))
+item_selecionado = st.selectbox(
+    "Pesquise ou selecione um item para ver o total somado em TODAS as unidades/plataformas:",
+    options=itens_unicos,
+    index=0 if itens_unicos else None
+)
+
+if item_selecionado:
+    # Filtra no dataframe BRUTO (todas as plataformas) para ter o acumulado total real
+    df_item_especifico = df_raw[df_raw["Item"] == item_selecionado]
+    
+    qtd_total_item = float(df_item_especifico["Quantidade"].sum())
+    num_unidades_com_item = df_item_especifico["Plataforma"].nunique()
+    status_item = "🟢 DISPONÍVEL" if qtd_total_item > 0 else "🔴 ZERADO EM TODAS AS UNIDADES"
+    
+    col_i1, col_i2, col_i3 = st.columns(3)
+    
+    with col_i1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-label">Item Selecionado</div>
+            <div class="metric-val" style="font-size: 1.2rem; word-break: break-word;">{item_selecionado}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col_i2:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-label">Quantidade Total (Todas Plataformas)</div>
+            <div class="metric-val" style="color: #38bdf8;">{qtd_total_item:,.0f} <span style="font-size:1rem; color:#64748b;">un</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col_i3:
+        cor_status = "#34d399" if qtd_total_item > 0 else "#f43f5e"
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-label">Presente em Unidades</div>
+            <div class="metric-val" style="color: {cor_status};">{num_unidades_com_item} <span style="font-size:1rem; color:#64748b;">plataforma(s)</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with st.expander(f"📌 Detalhamento do item '{item_selecionado}' por Plataforma"):
+        df_detalhe_item = df_item_especifico[
+            ["Plataforma", "Código", "Categoria", "Localização", "Quantidade", "Status_Estoque"]
+        ].sort_values(by="Plataforma")
+        
+        st.dataframe(
+            df_detalhe_item,
+            use_container_width=True,
+            hide_index=True
+        )
+
+st.markdown("---")
+
+# -----------------------------------------------------------------------------
+# 6. Dashboard de Métricas Globais
 # -----------------------------------------------------------------------------
 total_itens = len(df_filtrado)
 total_qtd = float(df_filtrado["Quantidade"].sum())
@@ -417,7 +477,7 @@ if qtd_zero > 0:
         )
 
 # -----------------------------------------------------------------------------
-# 6. Análise Visual Grafica (Plotly Dark Customizado)
+# 7. Análise Visual Gráfica (Plotly Dark Customizado)
 # -----------------------------------------------------------------------------
 st.markdown("---")
 st.markdown("### 📊 Analytics de Suprimentos")
@@ -462,7 +522,7 @@ with col_g2:
     st.plotly_chart(fig_plat, use_container_width=True)
 
 # -----------------------------------------------------------------------------
-# 7. Central de Relatórios e Exportação
+# 8. Central de Relatórios e Exportação
 # -----------------------------------------------------------------------------
 st.markdown("---")
 st.markdown("### 🖨️ Central de Relatórios e Exportação")
@@ -518,7 +578,7 @@ with tab_todos:
     )
 
 # -----------------------------------------------------------------------------
-# 8. Gerador de Relatório HTML Estilizado para Impressão
+# 9. Gerador de Relatório HTML Estilizado para Impressão
 # -----------------------------------------------------------------------------
 def gerar_html_relatorio_discriminado(df, titulo):
     tot_itens = len(df)
