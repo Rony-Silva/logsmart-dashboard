@@ -265,7 +265,7 @@ def carregar_dados_pasta(nome_pasta="dados"):
             df_selecionado["Plataforma"] = nome_plataforma
 
             for col in ["Código", "Item", "Localização", "Categoria"]:
-                df_selecionado[col] = df_selecionado[col].astype(str).str.strip()
+                df_selecionado[col] = df_selecionado[col].fillna("").astype(str).str.strip()
 
             termos_cabecalho = [
                 "item", "descrição", "descricao", "descriçao", "código", "codigo", 
@@ -298,7 +298,7 @@ def carregar_dados_pasta(nome_pasta="dados"):
         df_final = pd.concat(lista_dfs, ignore_index=True)
         cols_texto = ["Código", "Item", "Localização", "Categoria", "Plataforma"]
         for col in cols_texto:
-            df_final[col] = df_final[col].astype(str).str.strip()
+            df_final[col] = df_final[col].fillna("").astype(str).str.strip()
 
         categorias_invalidas = ["nan", "none", "", "0", "geral", "não especificada", "nao especificada", "categoria"]
         df_final = df_final[~df_final["Categoria"].str.lower().isin(categorias_invalidas)]
@@ -336,14 +336,16 @@ if df_raw.empty:
     st.stop()
 
 st.sidebar.markdown("---")
-plataformas_disponiveis = sorted(list(df_raw["Plataforma"].unique()))
+
+# GARANTIA DE TIPOS DE TEXTO E REMOÇÃO DE VALORES NULOS PARA ORDENAÇÃO SEGURA
+plataformas_disponiveis = sorted(list(df_raw["Plataforma"].fillna("").astype(str).unique()))
 plataformas_sel = st.sidebar.multiselect(
     "🚢 Selecionar Plataformas:",
     options=plataformas_disponiveis,
     default=plataformas_disponiveis
 )
 
-categorias_disponiveis = sorted(list(df_raw["Categoria"].unique()))
+categorias_disponiveis = sorted(list(df_raw["Categoria"].fillna("").astype(str).unique()))
 categorias_sel = st.sidebar.multiselect(
     "🏷️ Selecionar Categorias:",
     options=categorias_disponiveis,
@@ -360,7 +362,7 @@ df_filtrado = df_raw[
 # -----------------------------------------------------------------------------
 st.markdown("### 🔍 Consulta de Item Individual (Consolidado Global)")
 
-itens_unicos = sorted(list(df_raw["Item"].unique()))
+itens_unicos = sorted(list(df_raw["Item"].fillna("").astype(str).unique()))
 item_selecionado = st.selectbox(
     "Pesquise ou selecione um item para ver o total somado em TODAS as unidades/plataformas:",
     options=itens_unicos,
@@ -585,7 +587,7 @@ def gerar_html_relatorio_discriminado(df, titulo):
     tot_quant = int(df["Quantidade"].sum())
     tot_zerados = int((df["Quantidade"] == 0).sum())
     
-    plataformas = sorted(df["Plataforma"].unique())
+    plataformas = sorted(df["Plataforma"].fillna("").astype(str).unique())
     html_unidades = ""
 
     for plat in plataformas:
